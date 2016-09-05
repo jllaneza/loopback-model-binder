@@ -26,7 +26,7 @@ let modelLoader = {
   extends: (app, dataSource, configs) => {
     let schema = GetModelSchema(configs.rootDir);
     if (schema){
-      let connector = GetDSConnector(configs.rootDir, dataSource);
+      let connector = GetDSConnector(configs.dsRootDir, dataSource);
       if (connector){
         let _loader = RequireObject(`./model-loader-extends-${connector}`);
         let loader = new _loader(app, schema, dataSource, configs);

@@ -28,10 +28,16 @@ export {
   RequireObject,
   isFunction,
   PropertyListChanged,
-  toSpinalCase,
   PathJoin,
   ReadFileSync,
   ReadGlob,
   GetModelSchema,
   GetDSConnector
 } from './utils';
+
+export {
+  toNoCase,
+  toPascalCase,
+  toSpaceCase,
+  toSpinalCase
+} from './utils-string';

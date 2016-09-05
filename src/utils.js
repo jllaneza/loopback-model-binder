@@ -124,10 +124,6 @@ PropertyListChanged = (sourceObj, dbObj) => {
   });  
   return propertiesListChanged;
 },
-toSpinalCase = (str) => {
-  return str.replace(/(?!^)([A-Z])/g, ' $1')
-            .replace(/[_\s]+(?=[a-zA-Z])/g, '-').toLowerCase();
-},
 GetModelSchema = (rootDir) => {
   let schema;
   let modelSchemas = ReadGlob(`${rootDir}/*-model.json`);
@@ -156,6 +152,9 @@ GetDSConnector = (rootDir, dsKey) => {
 },
 BaseName = (filePath) => {
   return path.basename(filePath);  
+},
+FileNameWithOutExt = (baseName) => {
+  return path.parse(BaseName(baseName)).name;
 };
 
 export { 
@@ -170,9 +169,9 @@ export {
   randomId,
   RequireObject,
   isFunction,
-  globArray,
-  toSpinalCase,
+  globArray, 
   GetModelSchema,
   GetDSConnector,
-  BaseName
+  BaseName,
+  FileNameWithOutExt
 }

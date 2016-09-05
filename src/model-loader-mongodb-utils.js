@@ -1,6 +1,7 @@
 /// <reference path="../typings/index.d.ts" />
 
-import { randomId, toSpinalCase } from './utils';
+import { randomId } from './utils';
+import { toSpinalCase } from './utils-string';
 import { SeedData } from './model-loader-utils';
 import Model from './model';
 import * as Rx from 'rx';

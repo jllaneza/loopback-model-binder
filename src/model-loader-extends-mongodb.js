@@ -1,7 +1,8 @@
 /// <reference path="../typings/index.d.ts" />
 
 import Model from './model';
-import { toSpinalCase, randomId } from './utils';
+import { randomId } from './utils';
+import { toSpinalCase } from './utils-string';
 import * as events from 'events';
 
 let app = Symbol();

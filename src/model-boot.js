@@ -7,6 +7,7 @@ import * as Rx from 'rx';
 
 let app = Symbol();
 let rootDir = Symbol();
+let configValues = Symbol();
 
 /** configs schema
  * let configs = {
@@ -15,8 +16,10 @@ let rootDir = Symbol();
  *   ],
  *   seed: {
  *     rootDir: __dirname,
- *     isSeed: true
- *   }
+ *     models: []
+ *   },
+ *   dsRootDir: __dirname,
+ *   rootDir: __dirname
  * }
  */
 
@@ -34,6 +37,7 @@ export default class ModelBoot {
   constructor(App, RootDir) {
     this[app] = App;
     this[rootDir] = RootDir;
+    this[configValues] = null;
   }
 
   /**
@@ -41,10 +45,9 @@ export default class ModelBoot {
    */
   onInit(){
     return dataSourceLoader
-      .load(this[app], this[rootDir])
+      .load(this[app], this[rootDir], this.configs.dsRootDir)
       .flatMap((dataSources) => {
-        return modelBootUtils
-          .loader(this[app], this[rootDir], dataSources, this.configs);
+        return modelBootUtils.loader(this[app], dataSources, this.configs);
       });
   }
 
@@ -55,25 +58,28 @@ export default class ModelBoot {
    * if not exist will create default config schema
   */
   get configs(){
-    let configValues = null;
-    let _configs = ReadGlob(`${this[rootDir]}/*-binder.config.js`);
-    if (_configs && _configs.length > 0){
-      if (_configs.length > 1){
-        throw new Error(`Only one (1) model binder.config file, should be in ${this[rootDir]}`);  
-      }    
-      _configs.forEach((configSchema) => {
-        configValues = require(configSchema).configs; 
-      });
-    } else {
-      const SEED_ROOT_DIR = `${this[rootDir]}/seeds`;
-      configValues = {
-        files: [{ include: "./**/*.js", ignore: IGNORE_FILES }],
-        seed: {
-          rootDir: SEED_ROOT_DIR,
-          isSeed: true
-        }
-      };
+    if (!(this[configValues])){
+      let _configs = ReadGlob(`${this[rootDir]}/*-binder.config.js`);
+      if (_configs && _configs.length > 0){
+        if (_configs.length > 1){
+          throw new Error(`Only one (1) model binder.config file, should be in ${this[rootDir]}`);  
+        }    
+        _configs.forEach((configSchema) => {
+          this[configValues] = require(configSchema).configs; 
+        });
+      } else {
+        const SEED_ROOT_DIR = `${this[rootDir]}/seeds`;
+        this[configValues] = {
+          files: [{ include: "./**/*.js", ignore: IGNORE_FILES }],
+          seed: {
+            rootDir: SEED_ROOT_DIR,
+            models: modelBootUtils.getModelSeeds(SEED_ROOT_DIR)
+          },
+          dsRootDir: this[rootDir],
+          rootDir: this[rootDir]
+        };
+      }
     }
-    return configValues;
+    return this[configValues];
   }
 }

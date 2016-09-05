@@ -1,6 +1,7 @@
 /// <reference path="../typings/index.d.ts" />
 
-import { toSpinalCase, ReadGlob, PathJoin, RequireObject, isFunction } from './utils';
+import { ReadGlob, PathJoin, RequireObject, isFunction } from './utils';
+import { toSpinalCase } from './utils-string';
 import ModelSeed from './model-seed';
 import * as Rx from 'rx';
 
@@ -8,7 +9,7 @@ import * as Rx from 'rx';
 ///   It should have Model/Collections list that exempt 
 ///   from seeding data
 let SeedData = (seed, model, collection, dataSource) => {
-  if (seed.isSeed){
+  if (isCollectionExist(seed.models, collection)){
     let files = ReadGlob(PathJoin(seed.rootDir, `./${toSpinalCase(collection)}.js`));
     if (files){
       let RxNodeCallBack = Rx.Observable.fromNodeCallback(seeFile);
@@ -18,6 +19,12 @@ let SeedData = (seed, model, collection, dataSource) => {
     }
   }
 }, 
+isCollectionExist = (models, collection) => {
+  let filtered = models.filter((model) => {
+    return model === collection;
+  });
+  return (filtered && filtered.length);
+},
 seeFile = (file, model, dataSource) => {
   let seed = RequireObject(file);
   if (seed && isFunction(seed)){ 

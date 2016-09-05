@@ -1,13 +1,11 @@
 /// <reference path="../typings/index.d.ts" />
 
 import Model from './model';
-import { toSpinalCase } from './utils';
 import * as events from 'events';
 
 let app = Symbol();
 let schema = Symbol();
 let dataSource = Symbol();
-let configs = Symbol();
 
 export default class ModelLoaderExtendsRest {
 

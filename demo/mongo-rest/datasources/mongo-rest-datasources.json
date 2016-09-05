@@ -1,0 +1,11 @@
+{
+  "MongoRestData": {
+    "connector": "mongodb",
+    "debug": "true",
+    "host": "localhost",
+    "database": "mongorest",
+    "port": 27017,
+    "username": "root",
+    "password": ""
+  }
+}

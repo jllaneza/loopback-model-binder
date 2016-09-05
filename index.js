@@ -21,5 +21,8 @@ export {
   ReadFileSync,
   ReadGlob,
   GetModelSchema,
-  GetDSConnector
+  GetDSConnector,
+  toNoCase,
+  toPascalCase,
+  toSpaceCase
 } from './src';

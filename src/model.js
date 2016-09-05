@@ -1,6 +1,5 @@
 
-let singleton = Symbol(),
-  _model = Symbol();
+let singleton = Symbol();
 
 /**
  * Model instance

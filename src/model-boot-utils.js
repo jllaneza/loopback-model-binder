@@ -1,6 +1,8 @@
 /// <reference path="../typings/index.d.ts" />
 
 import { modelLoader } from './model-loader';
+import { toPascalCase } from './utils-string';
+import { ReadGlob, FileNameWithOutExt } from './utils';
 import * as Rx from 'rx';
 
 const IGNORE_FILES = [
@@ -13,10 +15,10 @@ const IGNORE_FILES = [
 ];
 
 let modelBootUtils = {
-  loader: (app, rootDir, dataSources, configs) => {
+  loader: (app, dataSources, configs) => {
     return Rx.Observable.create((observer) => {
       modelBootUtils
-        .load(app, rootDir, dataSources, configs)
+        .load(app, dataSources, configs)
         .subscribe((value) => {
           modelBootUtils.extend(app, value.dataSources, value.configs);  
           observer.onNext(value.modelName);
@@ -24,10 +26,9 @@ let modelBootUtils = {
         });
     });
   },
-  load: (app, rootDir, dataSources, configs) => {
+  load: (app, dataSources, configs) => {
     let localConfigs = Object.assign({}, configs);
     localConfigs.dataSource = dataSources[0];
-    localConfigs.rootDir = rootDir; 
     return modelLoader.load(app, localConfigs) 
       .flatMap((modelName) => {
         return Rx.Observable.create((observer) => {
@@ -46,6 +47,16 @@ let modelBootUtils = {
         modelLoader.extends(app, dataSources[i], configs);
       }
     }
+  },
+  getModelSeeds: (seedRootDir) => {
+    let models = [];
+    let files = ReadGlob(`${seedRootDir}/*.js`);
+    if (files){
+      files.forEach((file) => {
+        models.push(toPascalCase(FileNameWithOutExt(file)));
+      });
+    } 
+    return models;
   }
 };
 
